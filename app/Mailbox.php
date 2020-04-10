@@ -705,4 +705,32 @@ class Mailbox extends Model
                             ->where('user_id', $user_id)
                             ->first();
     }*/
+
+    public function userIdsHavingManage()
+    {
+
+        $mailbox_id = $this->id;
+        $users = User::select(['users.*', 'mailbox_user.manage'])
+            ->join('mailbox_user', function ($join) use ($mailbox_id) {
+                $join->on('mailbox_user.user_id', '=', 'users.id');
+                $join->where('mailbox_user.mailbox_id', $mailbox_id);
+                $join->where('mailbox_user.manage', true);
+            })
+            ->remember(\Helper::cacheTime())
+            ->get();
+
+        // Exclude deleted users (better to do it in PHP).
+        foreach ($users as $i => $user) {
+            if (!$user->isActive()) {
+                $users->forget($i);
+            }
+        }
+
+        $users_array = [];
+
+        foreach ($users as $user)
+            $users_array[] = $user->id;
+
+        return $users_array;
+    }
 }

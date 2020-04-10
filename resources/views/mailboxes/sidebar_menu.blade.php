@@ -3,9 +3,9 @@
         $menu_mailboxes = auth()->user()->mailboxesCanView();
     @endphp
     <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
-        {{ $mailbox->name }} @if (count($menu_mailboxes))<span class="caret"></span>@endif
+        {{ $mailbox->name }} @if (count($menu_mailboxes) && Auth::user()->isAdmin())<span class="caret"></span>@endif
     </span>
-    @if (count($menu_mailboxes))
+    @if (count($menu_mailboxes) && Auth::user()->isAdmin())
         <ul class="dropdown-menu">
             @foreach ($menu_mailboxes as $mailbox_item)
                 <li @if ($mailbox_item->id == $mailbox->id)class="active"@endif><a href="{{ route(Eventy::filter('mailboxes.menu_current_route', Route::currentRouteName()), ['id'=>$mailbox_item->id]) }}">{{ $mailbox_item->name }}</a></li>

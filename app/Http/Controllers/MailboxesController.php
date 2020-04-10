@@ -115,7 +115,15 @@ class MailboxesController extends Controller
 
         $this->authorize('update', $mailbox);
 
-        $validator = Validator::make($request->all(), [
+        // is the user is not admin (so a manager), set the name, email, and alias to what it use to be
+        $form_data = $request->all();
+        if (!auth()->user()->isAdmin()) {
+            $form_data['name'] = $mailbox->name;
+            $form_data['email'] = $mailbox->email;
+            $form_data['aliases'] = $mailbox->aliases;
+        }
+
+        $validator = Validator::make($form_data, [
             'name'             => 'required|string|max:40',
             'email'            => 'required|string|email|max:128|unique:mailboxes,email,'.$id,
             'aliases'          => 'nullable|string|max:255',
@@ -135,7 +143,7 @@ class MailboxesController extends Controller
                         ->withInput();
         }
 
-        $mailbox->fill($request->all());
+        $mailbox->fill($form_data);
 
         $mailbox->save();
 
@@ -410,7 +418,7 @@ class MailboxesController extends Controller
     {
         $flashes = [];
 
-        if ($mailbox) {
+        if ($mailbox && auth()->user()->isAdmin()) {
             if (Route::currentRouteName() != 'mailboxes.connection' && !$mailbox->isOutActive()) {
                 $flashes[] = [
                     'type'      => 'warning',
@@ -641,7 +649,7 @@ class MailboxesController extends Controller
 
                 if (!$mailbox) {
                     $response['msg'] = __('Mailbox not found');
-                } elseif (!$user->can('update', $mailbox)) {
+                } elseif (!$user->can('update', $mailbox) || !$user->isAdmin()) {
                     $response['msg'] = __('Not enough permissions');
                 } elseif (!Hash::check($request->password, $user->password)) {
                     $response['msg'] = __('Please double check your password, and try again');

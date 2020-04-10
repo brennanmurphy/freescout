@@ -81,7 +81,12 @@ class MailboxPolicy
         if ($user->isAdmin()) {
             return true;
         } else {
-            return false;
+            // check if they are a manager
+            if (in_array($user->id, $mailbox->userIdsHavingManage())) {
+                return True;
+            } else {
+                return False;
+            }
         }
     }
 
