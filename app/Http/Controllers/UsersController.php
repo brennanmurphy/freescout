@@ -237,11 +237,19 @@ class UsersController extends Controller
 
         $users = $this->getUsersForSidebar($id);
 
+        $manages = [];
+        foreach ($user->mailboxes as $mb) {
+            if ($mb->pivot->manage == 1) {
+                $manages[] = $mb->id;
+            }
+        }
+        
         return view('users/permissions', [
             'user'           => $user,
             'mailboxes'      => $mailboxes,
             'user_mailboxes' => $user->mailboxes,
             'users'          => $users,
+            'manages'        => $manages,
         ]);
     }
 
@@ -260,7 +268,16 @@ class UsersController extends Controller
 
         $user = User::findOrFail($id);
 
-        $user->mailboxes()->sync($request->mailboxes);
+        $mailbox_sync = [];
+        foreach ($request->mailboxes as $mailbox) {
+            if (in_array($mailbox, $request->manage)) {
+                $mailbox_sync[$mailbox] = ['manage' => true];
+            } else {
+                $mailbox_sync[] = $mailbox;
+            }
+        }
+
+        $user->mailboxes()->sync($mailbox_sync);
         $user->syncPersonalFolders($request->mailboxes);
 
         \Session::flash('flash_success_floating', __('Permissions saved successfully'));

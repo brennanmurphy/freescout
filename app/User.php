@@ -124,7 +124,7 @@ class User extends Authenticatable
      */
     public function mailboxes()
     {
-        return $this->belongsToMany('App\Mailbox');
+        return $this->belongsToMany('App\Mailbox')->withPivot('manage');
     }
 
     /**
@@ -140,7 +140,8 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Mailbox')->as('settings')
             ->withPivot('after_send')
             ->withPivot('hide')
-            ->withPivot('mute');
+            ->withPivot('mute')
+            ->withPivot('manage');
     }
 
     /**

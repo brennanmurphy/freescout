@@ -28,20 +28,20 @@
                     <table class="table" id="permissions-users">
                         <tr class="table-header-nb">
                             <th>&nbsp;</th>
-                            <th class="text-center">{{ __('Access')}} <small><a href="javascript:void(0)" class="sel-all" data-target="user-access">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="user-access">{{ __('none') }}</a></small></th>
+                            <th class="text-center">{{ __('Access')}} <small><a href="javascript:void(0)" class="sel-all" data-target="access">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="access">{{ __('none') }}</a></small></th>
                             @if (Auth::user()->isAdmin())
-                                <th class="text-center">{{ __('Manager')}} <small><a href="javascript:void(0)" class="sel-all" data-target="user-manage">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="user-manage">{{ __('none') }}</a></small></th>
+                                <th class="text-center">{{ __('Manager')}} <small><a href="javascript:void(0)" class="sel-all" data-target="manage">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="manage">{{ __('none') }}</a></small></th>
                             @endif
                         </tr>
                         @foreach ($users as $user)
                             <tr>
                                 <td>{{ $user->getFullName() }}</td>
                                 <td class="text-center">
-                                    <input class="user-access" type="checkbox" name="users[]" id="user-{{ $user->id }}" value="{{ $user->id }}" data-user-id="{{ $user->id }}" @if (!empty($user->mailbox_user_id)) checked="checked" @endif>
+                                    <input class="access" type="checkbox" name="users[]" id="access-{{ $user->id }}" value="{{ $user->id }}" data-id="{{ $user->id }}" @if (!empty($user->mailbox_user_id)) checked="checked" @endif>
                                 </td>
                                 @if (Auth::user()->isAdmin())
                                     <td class="text-center">
-                                        <input class="user-manage" type="checkbox" name="manage[]" id="manage-{{ $user->id }}" data-user-id="{{ $user->id }}" @if (!empty($user->manage)) checked="checked" @endif value="{{ $user->id }}">
+                                        <input class="manage" type="checkbox" name="manage[]" id="manage-{{ $user->id }}" data-id="{{ $user->id }}" @if (!empty($user->manage)) checked="checked" @endif value="{{ $user->id }}">
                                     </td>
                                 @endif
                             </tr>

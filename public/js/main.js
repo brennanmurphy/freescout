@@ -494,13 +494,13 @@ function permissionsInit()
 {
 	$(document).ready(function(){
 		// all/none buttons bulk changes
-	    $('.sel-all').click(function(event) {
+		$('.sel-all').click(function(event) {
 			var target = $(this).data('target');
 			$("input."+target).prop('checked', true);
 
 			// if we are checking off all managers
-			if (target == 'user-manage') {
-				$("input.user-access").prop('checked', true);
+			if (target == 'manage' ) {
+				$("input.access").prop('checked', true);
 			}
 		});
 		$('.sel-none').click(function(event) {
@@ -509,22 +509,22 @@ function permissionsInit()
 
 			// if we are unchecking all managers
 			// if we are checking off all managers
-			if (target == 'user-access') {
-				$("input.user-manage").prop('checked', false);
+			if (target == 'access') {
+				$("input.manage").prop('checked', false);
 			}
 		});
 
 		// make sure if you click manage, access is selected and vis-versa
-		$('input.user-manage').click(function(event) {
+		$('input.manage').click(function(event) {
 			if($(this).is(":checked")) {
-				var user_id = $(this).data('user-id')
-				$('input.user-access#user-'+user_id).prop('checked', true);
+				var id = $(this).data('id')
+				$('input.access#access-'+id).prop('checked', true);
 			}
 		});
-		$('input.user-access').click(function(event) {
+		$('input.access').click(function(event) {
 			if($(this).is(":not(:checked)")) {
-				var user_id = $(this).data('user-id')
-				$('input.user-manage#manage-'+user_id).prop('checked', false);
+				var id = $(this).data('id')
+				$('input.manage#manage-'+id).prop('checked', false);
 			}
 		});
 	});
