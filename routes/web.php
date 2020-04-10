@@ -69,10 +69,10 @@ Route::get('/mailbox/permissions/{id}', 'MailboxesController@permissions')->name
 Route::post('/mailbox/permissions/{id}', 'MailboxesController@permissionsSave')->name('mailboxes.permissions.save');
 Route::get('/mailbox/{id}', 'MailboxesController@view')->name('mailboxes.view');
 Route::get('/mailbox/{id}/{folder_id}', 'MailboxesController@view')->name('mailboxes.view.folder');
-Route::get('/mailbox/connection-settings/{id}/outgoing', 'MailboxesController@connectionOutgoing')->name('mailboxes.connection');
-Route::post('/mailbox/connection-settings/{id}/outgoing', 'MailboxesController@connectionOutgoingSave')->name('mailboxes.connection.save');
-Route::get('/mailbox/connection-settings/{id}/incoming', 'MailboxesController@connectionIncoming')->name('mailboxes.connection.incoming');
-Route::post('/mailbox/connection-settings/{id}/incoming', 'MailboxesController@connectionIncomingSave')->name('mailboxes.connection.incoming.save');
+Route::get('/mailbox/connection-settings/{id}/outgoing', ['uses' => 'MailboxesController@connectionOutgoing', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('mailboxes.connection');
+Route::post('/mailbox/connection-settings/{id}/outgoing', ['uses' => 'MailboxesController@connectionOutgoingSave', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('mailboxes.connection.save');
+Route::get('/mailbox/connection-settings/{id}/incoming', ['uses' => 'MailboxesController@connectionIncoming', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('mailboxes.connection.incoming');
+Route::post('/mailbox/connection-settings/{id}/incoming', ['uses' => 'MailboxesController@connectionIncomingSave', 'middleware' => ['auth', 'roles'], 'roles' => ['admin']])->name('mailboxes.connection.incoming.save');
 Route::get('/mailbox/settings/{id}/auto-reply', 'MailboxesController@autoReply')->name('mailboxes.auto_reply');
 Route::post('/mailbox/settings/{id}/auto-reply', 'MailboxesController@autoReplySave')->name('mailboxes.auto_reply.save');
 Route::post('/mailbox/ajax', ['uses' => 'MailboxesController@ajax', 'laroute' => true])->name('mailboxes.ajax');

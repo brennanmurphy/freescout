@@ -257,7 +257,7 @@ $(document).ready(function(){
 	// Search button
 	$('#search-dt').click(function() {
 		var dt = $(this);
-		setTimeout(function() { 
+		setTimeout(function() {
 			dt.next().children().find('.form-control:first').focus();
 		}, 100);
 	});
@@ -287,7 +287,7 @@ function initMuteMailbox()
 			function(response) {
 				button.button('reset');
 				if (isAjaxSuccess(response)) {
-					setTimeout(function(){ 
+					setTimeout(function(){
 						button.children('span').addClass('hidden');
 						var new_mute;
 						if (mute == 1) {
@@ -493,11 +493,39 @@ function summernoteInit(selector, new_options)
 function permissionsInit()
 {
 	$(document).ready(function(){
+		// all/none buttons bulk changes
 	    $('.sel-all').click(function(event) {
-			$("#permissions-fields input").attr('checked', 'checked');
+			var target = $(this).data('target');
+			$("input."+target).prop('checked', true);
+
+			// if we are checking off all managers
+			if (target == 'user-manage') {
+				$("input.user-access").prop('checked', true);
+			}
 		});
 		$('.sel-none').click(function(event) {
-			$("#permissions-fields input").removeAttr('checked');
+			var target = $(this).data('target');
+			$("input."+target).prop('checked', false);
+
+			// if we are unchecking all managers
+			// if we are checking off all managers
+			if (target == 'user-access') {
+				$("input.user-manage").prop('checked', false);
+			}
+		});
+
+		// make sure if you click manage, access is selected and vis-versa
+		$('input.user-manage').click(function(event) {
+			if($(this).is(":checked")) {
+				var user_id = $(this).data('user-id')
+				$('input.user-access#user-'+user_id).prop('checked', true);
+			}
+		});
+		$('input.user-access').click(function(event) {
+			if($(this).is(":not(:checked)")) {
+				var user_id = $(this).data('user-id')
+				$('input.user-manage#manage-'+user_id).prop('checked', false);
+			}
 		});
 	});
 }
@@ -2308,7 +2336,7 @@ function changeCustomerInit()
 					if (typeof(response.status) != "undefined" && response.status == 'success') {
 						conversationChangeCustomer(response.email);
 					}
-					
+
 					ajaxFinish();
 				}
 			);
@@ -2915,7 +2943,7 @@ function polycastInit()
 		    }
 
 		    // Update assignee if needed
-		    if (typeof(data.conversation_user_id) != "undefined" && data.conversation_user_id 
+		    if (typeof(data.conversation_user_id) != "undefined" && data.conversation_user_id
 		    	&& parseInt(data.conversation_user_id) != convGetUserId()
 		    ) {
 		    	$('#conv-assignee .conv-user li.active').removeClass('active');
@@ -2926,7 +2954,7 @@ function polycastInit()
 		    }
 
 		    // Update status if needed
-		    if (typeof(data.conversation_status) != "undefined" && data.conversation_status 
+		    if (typeof(data.conversation_status) != "undefined" && data.conversation_status
 		    	&& parseInt(data.conversation_status) != convGetStatus()
 		    ) {
 		    	$('#conv-status .conv-status li.active').removeClass('active');
@@ -2936,14 +2964,14 @@ function polycastInit()
 		    	// Update class
 		    	if (data.conversation_status_class) {
 					$.each($('#conv-status .btn'), function(index, btn) {
-						var classes = $(btn).attr('class').split(/\s+/); 
+						var classes = $(btn).attr('class').split(/\s+/);
 						$.each(classes, function(index, item_class) {
 							if (item_class.indexOf('btn-') != -1 && item_class != 'btn-light') {
 								$(btn).removeClass(item_class);
 							}
-						});   
+						});
 					});
-		    	
+
 		    		$('#conv-status .btn').addClass('btn-'+data.conversation_status_class);
 		    	}
 		    	// Update icon
@@ -4376,7 +4404,7 @@ function setCookie(name, value, props)
         d.setTime(d.getTime() + exp*1000);
         exp = props.expires = d;
     }
-    if (exp && exp.toUTCString) { 
+    if (exp && exp.toUTCString) {
     	props.expires = exp.toUTCString();
     }
 

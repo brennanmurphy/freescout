@@ -153,7 +153,13 @@ class MailboxesController extends Controller
 
         $this->authorize('update', $mailbox);
 
-        $users = User::nonDeleted()->where('role', '!=', User::ROLE_ADMIN)->get();
+        $users = User::nonDeleted()
+            ->select(['users.*', 'mailbox_user.id as mailbox_user_id', 'mailbox_user.manage'])
+            ->leftJoin('mailbox_user', function ($join) use ($mailbox) {
+                $join->on('mailbox_user.user_id', '=', 'users.id');
+                $join->where('mailbox_user.mailbox_id', $mailbox->id);
+            })
+            ->where('role', '!=', User::ROLE_ADMIN)->get();
         $users = User::sortUsers($users);
 
         $admins = User::nonDeleted()
@@ -169,7 +175,6 @@ class MailboxesController extends Controller
             'mailbox' => $mailbox,
             'users' => $users,
             'admins' => $admins,
-            'mailbox_users' => $mailbox->users,
         ]);
     }
 
@@ -184,7 +189,20 @@ class MailboxesController extends Controller
         $mailbox = Mailbox::findOrFail($id);
         $this->authorize('update', $mailbox);
 
-        $mailbox->users()->sync($request->users);
+        $sync_users = $request->users;
+        // if the user is admin, they can update the manage status of users
+        if (auth()->user()->isAdmin()) {
+            $sync_users = [];
+            foreach ($request->users as $user_id) {
+                if (in_array($user_id, $request->manage)) {
+                    $sync_users[$user_id] = ['manage' => true];
+                } else {
+                    $sync_users[] = $user_id;
+                }
+            }
+        }
+
+        $mailbox->users()->sync($sync_users);
         $mailbox->syncPersonalFolders($request->users);
 
         // Save admins settings.
@@ -210,6 +228,8 @@ class MailboxesController extends Controller
      */
     public function connectionOutgoing($id)
     {
+        $this->middleware('auth');
+
         $mailbox = Mailbox::findOrFail($id);
         $this->authorize('update', $mailbox);
 
@@ -221,6 +241,8 @@ class MailboxesController extends Controller
      */
     public function connectionOutgoingSave($id, Request $request)
     {
+        $this->middleware('auth');
+
         $mailbox = Mailbox::findOrFail($id);
         $this->authorize('update', $mailbox);
 
@@ -266,6 +288,8 @@ class MailboxesController extends Controller
      */
     public function connectionIncoming($id)
     {
+        $this->middleware('auth');
+
         $mailbox = Mailbox::findOrFail($id);
         $this->authorize('update', $mailbox);
 
@@ -291,6 +315,8 @@ class MailboxesController extends Controller
      */
     public function connectionIncomingSave($id, Request $request)
     {
+        $this->middleware('auth');
+
         $mailbox = Mailbox::findOrFail($id);
         $this->authorize('update', $mailbox);
 

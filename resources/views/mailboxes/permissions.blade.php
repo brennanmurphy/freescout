@@ -21,23 +21,32 @@
                     <h3> {{ __('Selected Users have access to this mailbox:') }}</h3>
                     <p class="block-help">{{ __('Administrators have access to all mailboxes and are not listed here.') }}</p>
                 </div>
-                <div class="col-xs-12">
-                    
+                <div class="col-md-11 col-lg-9">
+
                     {{ csrf_field() }}
 
-                    <p><a href="javascript:void(0)" class="sel-all">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none">{{ __('none') }}</a></p>
-
-                    <fieldset id="permissions-fields">
+                    <table class="table" id="permissions-users">
+                        <tr class="table-header-nb">
+                            <th>&nbsp;</th>
+                            <th class="text-center">{{ __('Access')}} <small><a href="javascript:void(0)" class="sel-all" data-target="user-access">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="user-access">{{ __('none') }}</a></small></th>
+                            @if (Auth::user()->isAdmin())
+                                <th class="text-center">{{ __('Manager')}} <small><a href="javascript:void(0)" class="sel-all" data-target="user-manage">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="user-manage">{{ __('none') }}</a></small></th>
+                            @endif
+                        </tr>
                         @foreach ($users as $user)
-                            <div class="control-group">
-                                <div class="controls">
-                                    <label class="control-label checkbox" for="user-{{ $user->id }}">
-                                        <input type="checkbox" name="users[]" id="user-{{ $user->id }}" value="{{ $user->id }}" @if ($mailbox_users->contains($user)) checked="checked" @endif> {{ $user->first_name }} {{ $user->last_name }}
-                                    </label>
-                                </div>
-                            </div>
+                            <tr>
+                                <td>{{ $user->getFullName() }}</td>
+                                <td class="text-center">
+                                    <input class="user-access" type="checkbox" name="users[]" id="user-{{ $user->id }}" value="{{ $user->id }}" data-user-id="{{ $user->id }}" @if (!empty($user->mailbox_user_id)) checked="checked" @endif>
+                                </td>
+                                @if (Auth::user()->isAdmin())
+                                    <td class="text-center">
+                                        <input class="user-manage" type="checkbox" name="manage[]" id="manage-{{ $user->id }}" data-user-id="{{ $user->id }}" @if (!empty($user->manage)) checked="checked" @endif value="{{ $user->id }}">
+                                    </td>
+                                @endif
+                            </tr>
                         @endforeach
-                    </fieldset>
+                    </table>
 
                 </div>
 
@@ -45,27 +54,27 @@
                     <h3> {{ __('Administrators') }}:</h3>
                 </div>
                 <div class="col-md-11 col-lg-9">
-                    
+
                     <table class="table">
                         <tr class="table-header-nb">
                             <th>&nbsp;</th>
-                            <th class="text-center">{{ __('Hide from Assign list') }}</th>
+                            <th class="text-center">{{ __('Hide from Assign list') }} <small><a href="javascript:void(0)" class="sel-all" data-target="admin-hide">{{ __('all') }}</a> / <a href="javascript:void(0)" class="sel-none" data-target="admin-hide">{{ __('none') }}</a></small></th>
                         </tr>
-                        <fieldset id="permissions-fields">
+                        <fieldset id="permissions-admin-fields">
                             @foreach ($admins as $admin)
                                 <tr>
                                     <td>{{ $admin->getFullName() }}</td>
-                                    <td class="text-center"><input type="checkbox" name="admins[{{ $admin->id }}][hide]" value="1" @if (!empty($admin->hide)) checked="checked" @endif></td>
+                                    <td class="text-center"><input class="admin-hide" type="checkbox" name="admins[{{ $admin->id }}][hide]" value="1" @if (!empty($admin->hide)) checked="checked" @endif></td>
                                 </tr>
                             @endforeach
                         </fieldset>
                     </table>
                     <div class="form-group margin-top">
-                        
+
                         <button type="submit" class="btn btn-primary">
                             {{ __('Save') }}
                         </button>
-                    
+
                     </div>
                 </div>
             </form>

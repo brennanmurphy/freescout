@@ -162,7 +162,8 @@ class Mailbox extends Model
         return $this->belongsToMany('App\User')->as('settings')
             ->withPivot('after_send')
             ->withPivot('hide')
-            ->withPivot('mute');
+            ->withPivot('mute')
+			->withPivot('manage');
     }
 
     /**
