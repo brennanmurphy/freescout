@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@if ($__env->yieldContent('title_full'))@yield('title_full') @elseif ($__env->yieldContent('title'))@yield('title') - {{ config('app.name', 'FreeScout') }} @else{{ config('app.name', 'FreeScout') }}@endif</title>
-    
+
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     {{--<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">--}}
@@ -31,7 +31,7 @@
             \Helper::logException($e);
         }
     @endphp
-    
+
     @yield('stylesheets')
 </head>
 <body class="@if (!Auth::user()) user-is-guest @endif @if (Auth::user() && Auth::user()->isAdmin()) user-is-admin @endif @yield('body_class')" @yield('body_attrs') @if (Auth::user()) data-auth_user_id="{{ Auth::user()->id }}" @endif>
@@ -76,7 +76,7 @@
                             @endphp
                             @if (count($mailboxes) == 1)
                                 <li class="{{ \App\Misc\Helper::menuSelectedHtml('mailbox') }}"><a href="{{ route('mailboxes.view', ['id'=>$mailboxes[0]->id]) }}">{{ __('Mailbox') }}</a></li>
-                            @elseif (count($mailboxes) > 1) 
+                            @elseif (count($mailboxes) > 1)
                                 <li class="dropdown {{ \App\Misc\Helper::menuSelectedHtml('mailbox') }}">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
                                         {{ __('Mailbox') }} <span class="caret"></span>
@@ -88,7 +88,7 @@
                                     </ul>
                                 </li>
                             @endif
-                            @if (Auth::user()->isAdmin() || Auth::user()->can('viewMailboxMenu', Auth::user()))
+                            @if (Auth::user()->isAdmin())
                                 <li class="dropdown {{ \App\Misc\Helper::menuSelectedHtml('manage') }}">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
                                         {{ __('Manage') }} <span class="caret"></span>
@@ -166,10 +166,10 @@
                                                 @endif
                                             </ul>
                                         </li>
-                                        
+
                                     </ul>
                                 </li>
-                                                                
+
 
                                 <li class="dropdown">
 
@@ -279,7 +279,7 @@
     @endphp
     @yield('javascripts')
     <script type="text/javascript">
-        @if (\Helper::isInApp()) 
+        @if (\Helper::isInApp())
             @if (Auth::user())
                 fs_in_app_data['token'] = '{{ Auth::user()->getAuthToken() }}';
             @else

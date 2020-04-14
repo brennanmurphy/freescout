@@ -48,9 +48,27 @@ class MailboxPolicy
     }
 
     /**
+     * Determine whether the user can view mailboxes menu.
+     *
+     * @param \App\User    $user
+     * @param \App\Mailbox $mailbox
+     *
+     * @return mixed
+     */
+    public function viewMailboxMenu(User $user, Mailbox $mailbox)
+    {
+        if ($user->isAdmin() || \Eventy::filter('user.can_view_mailbox_menu', false, $user) || $this->update($user, $mailbox)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Determine whether the user can view mailbox conversations.
      *
-     * @param \App\User $user
+     * @param \App\User    $user
+     * @param \App\Mailbox $mailbox
      *
      * @return mixed
      */
@@ -83,10 +101,27 @@ class MailboxPolicy
         } else {
             // check if they are a manager
             if (in_array($user->id, $mailbox->userIdsHavingManage())) {
-                return True;
+                return true;
             } else {
-                return False;
+                return false;
             }
+        }
+    }
+
+    /**
+     * Determine whether the user can preform an update that only admins can do.
+     *
+     * @param \App\User    $user
+     * @param \App\Mailbox $mailbox
+     *
+     * @return mixed
+     */
+    public function updateAdmin(User $user, Mailbox $mailbox)
+    {
+        if ($user->isAdmin()) {
+            return true;
+        } else {
+            return false;
         }
     }
 

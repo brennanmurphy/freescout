@@ -117,7 +117,7 @@ class MailboxesController extends Controller
 
         // is the user is not admin (so a manager), set the name, email, and alias to what it use to be
         $form_data = $request->all();
-        if (!auth()->user()->isAdmin()) {
+        if (!auth()->user()->can('updateAdmin', $mailbox)) {
             $form_data['name'] = $mailbox->name;
             $form_data['email'] = $mailbox->email;
             $form_data['aliases'] = $mailbox->aliases;
@@ -199,7 +199,7 @@ class MailboxesController extends Controller
 
         $sync_users = $request->users;
         // if the user is admin, they can update the manage status of users
-        if (auth()->user()->isAdmin()) {
+        if (auth()->user()->can('updateAdmin', $mailbox)) {
             $sync_users = [];
             foreach ($request->users as $user_id) {
                 if (in_array($user_id, $request->manage)) {
@@ -239,7 +239,7 @@ class MailboxesController extends Controller
         $this->middleware('auth');
 
         $mailbox = Mailbox::findOrFail($id);
-        $this->authorize('update', $mailbox);
+        $this->authorize('updateAdmin', $mailbox);
 
         return view('mailboxes/connection', ['mailbox' => $mailbox, 'sendmail_path' => ini_get('sendmail_path'), 'flashes' => $this->mailboxActiveWarning($mailbox)]);
     }
@@ -252,7 +252,7 @@ class MailboxesController extends Controller
         $this->middleware('auth');
 
         $mailbox = Mailbox::findOrFail($id);
-        $this->authorize('update', $mailbox);
+        $this->authorize('updateAdmin', $mailbox);
 
         if ($request->out_method == Mailbox::OUT_METHOD_SMTP) {
             $validator = Validator::make($request->all(), [
@@ -299,7 +299,7 @@ class MailboxesController extends Controller
         $this->middleware('auth');
 
         $mailbox = Mailbox::findOrFail($id);
-        $this->authorize('update', $mailbox);
+        $this->authorize('updateAdmin', $mailbox);
 
         $fields = [
             'in_server'   => $mailbox->in_server,
@@ -326,7 +326,7 @@ class MailboxesController extends Controller
         $this->middleware('auth');
 
         $mailbox = Mailbox::findOrFail($id);
-        $this->authorize('update', $mailbox);
+        $this->authorize('updateAdmin', $mailbox);
 
         // $validator = Validator::make($request->all(), [
         //     'in_server'   => 'nullable|string|max:255',
@@ -418,7 +418,7 @@ class MailboxesController extends Controller
     {
         $flashes = [];
 
-        if ($mailbox && auth()->user()->isAdmin()) {
+        if ($mailbox && auth()->user()->can('updateAdmin', $mailbox)) {
             if (Route::currentRouteName() != 'mailboxes.connection' && !$mailbox->isOutActive()) {
                 $flashes[] = [
                     'type'      => 'warning',

@@ -30,7 +30,7 @@
                             <div class="block-help">
                                 {{ __('Administrator has not configured mailbox connection settings yet.') }}
                             </div>
-                            @if (Auth::user()->can('update', $mailbox))
+                            @if (Auth::user()->can('updateAdmin', $mailbox))
                                 @if (!$mailbox->isOutActive())
                                     <a href="{{ route('mailboxes.connection', ['id' => $mailbox->id]) }}" class="btn btn-link">{{ __('Configure') }}</a>
                                 @elseif (!$mailbox->isInActive())
@@ -39,10 +39,10 @@
                             @endif
                         </div>
                     </div>
-                    
+
                     <div class="dash-card-footer">
                         <div class="btn-group btn-group-justified btn-group-rounded">
-                            @if (Auth::user()->can('viewMailboxMenu', Auth::user()))
+                            @if (Auth::user()->can('viewMailboxMenu', $mailbox))
                                 <div class="btn-group dropdown dropup" data-toggle="tooltip" title="{{ __("Mailbox Settings") }}">
                                     <a data-toggle="dropdown" href="#" class="btn btn-trans"><i class="glyphicon glyphicon-cog dropdown-toggle"></i></a>
                                     <ul class="dropdown-menu" role="menu">

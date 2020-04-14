@@ -288,6 +288,12 @@ body.user-is-guest {
     .sidebar-menu-toggle {
         display: block;
     }
+    .sidebar-menu > li.divider {
+        height: 1px;
+        margin: 9px 0;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
     .sidebar-title {
         padding: 13px 0 0 0;
         margin: 0 20px 13px 50px;
