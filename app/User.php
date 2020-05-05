@@ -194,6 +194,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user is a manager of a given mailbox
+     * @param  int
+     * @return bool
+     */
+    public function isManager($mailbox)
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        $mailbox = $this->mailboxesWithSettings()->find($mailbox->id);
+
+        if ($mailbox == null) {
+            return false;
+        }
+
+        if (isset($mailbox->settings->manage) && $mailbox->settings->manage == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get user full name.
      *
      * @return string
