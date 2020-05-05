@@ -243,7 +243,7 @@ class UsersController extends Controller
                 $manages[] = $mb->id;
             }
         }
-        
+
         return view('users/permissions', [
             'user'           => $user,
             'mailboxes'      => $mailboxes,
@@ -270,7 +270,7 @@ class UsersController extends Controller
 
         $mailbox_sync = [];
         foreach ($request->mailboxes as $mailbox) {
-            if (in_array($mailbox, $request->manage)) {
+            if (is_array($request->manage) && in_array($mailbox, $request->manage)) {
                 $mailbox_sync[$mailbox] = ['manage' => true];
             } else {
                 $mailbox_sync[] = $mailbox;
